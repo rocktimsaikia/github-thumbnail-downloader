@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+      }
+      form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 8px 16px;
+        background: #0070f3;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #0051b3;
+      }
+      .error {
+        color: #e00;
+        margin-top: 10px;
+        display: none;
+      }
+      .loading {
+        display: none;
+        margin-top: 10px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>GitHub Repo Thumbnail Downloader</h1>
+      <form onsubmit="downloadThumbnail(event)">
+        <input
+          type="url"
+          id="url"
+          placeholder="Enter the Github repo link"
+          required
+        />
+        <button type="submit">Download</button>
+      </form>
+      <div id="loading" class="loading">Loading...</div>
+      <div id="error" class="error"></div>
+    </div>
+
+    <script>
+      async function downloadThumbnail(event) {
+        event.preventDefault();
+        const url = document.getElementById("url").value;
+        const loadingElement = document.getElementById("loading");
+        const errorElement = document.getElementById("error");
+
+        // Reset states
+        loadingElement.style.display = "block";
+        errorElement.style.display = "none";
+        errorElement.textContent = "";
+
+        try {
+          // Call the Netlify function
+          const response = await fetch(
+            `/api/thumbnail?url=${encodeURIComponent(url)}`,
+          );
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Failed to fetch thumbnail");
+          }
+
+          const data = await response.json();
+          if (data.imageUrl) {
+            // Create and trigger download
+            const link = document.createElement("a");
+            link.href = data.imageUrl;
+            link.download = "thumbnail.jpg";
+            link.target = "_blank";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }
+        } catch (error) {
+          errorElement.textContent = `Error: ${error.message}`;
+          errorElement.style.display = "block";
+        } finally {
+          loadingElement.style.display = "none";
+        }
+      }
+    </script>
+  </body>
+</html>
