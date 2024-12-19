@@ -74,7 +74,7 @@
         errorElement.textContent = "";
 
         try {
-          // Call the Netlify function
+          // First get the image URL from our API
           const response = await fetch(
             `/api/thumbnail?url=${encodeURIComponent(url)}`,
           );
@@ -85,14 +85,32 @@
 
           const data = await response.json();
           if (data.imageUrl) {
-            // Create and trigger download
+            // Fetch the actual image
+            const imageResponse = await fetch(data.imageUrl);
+            if (!imageResponse.ok) throw new Error("Failed to download image");
+
+            // Get the image as blob
+            const imageBlob = await imageResponse.blob();
+
+            // Create object URL from blob
+            const objectUrl = URL.createObjectURL(imageBlob);
+
+            // Get filename from URL or use default
+            const filename = data.imageUrl.split("/").pop() || "thumbnail.jpg";
+
+            // Create invisible download link
             const link = document.createElement("a");
-            link.href = data.imageUrl;
-            link.download = "thumbnail.jpg";
-            link.target = "_blank";
+            link.style.display = "none";
+            link.href = objectUrl;
+            link.download = filename;
+
+            // Trigger download
             document.body.appendChild(link);
             link.click();
+
+            // Clean up
             document.body.removeChild(link);
+            URL.revokeObjectURL(objectUrl);
           }
         } catch (error) {
           errorElement.textContent = `Error: ${error.message}`;
