@@ -4,7 +4,8 @@ const cheerio = require("cheerio");
 exports.handler = async function (event, context) {
 	// Enable CORS
 	const headers = {
-		"Access-Control-Allow-Origin": "*", // In production, replace with your domain
+		"Access-Control-Allow-Origin":
+			"https://github-thumbnail-downloader.netlify.app",
 		"Access-Control-Allow-Headers": "Content-Type",
 		"Access-Control-Allow-Methods": "GET",
 	};
