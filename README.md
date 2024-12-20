@@ -1,3 +1,5 @@
-# Github Thumbnail Downloader 📦
+## Github Thumbnail Downloader
 
-Download the default thumbnail of a Github repo.
+> Download the thumbnail images of GitHub repositories.
+
+https://github-thumbnail-downloader.netlify.app
