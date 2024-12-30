@@ -2,8 +2,16 @@
 <html>
   <head>
     <style>
+      body {
+        background: #353935;
+        color: #f3f3f3;
+      }
       .container {
-        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        max-width: 450px;
         margin: 40px auto;
         padding: 20px;
         font-family:
@@ -11,12 +19,18 @@
           -apple-system,
           sans-serif;
       }
-      form {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
+      section {
+        h1 {
+          margin: 0;
+        }
+        p {
+          margin-top: 5px;
+          color: #d5cfcf;
+        }
       }
       input {
+        margin-bottom: 10px;
+        width: 100%;
         flex: 1;
         padding: 8px;
         border: 1px solid #ccc;
@@ -26,6 +40,7 @@
         padding: 8px 16px;
         background: #0070f3;
         color: white;
+        font-weight: 500;
         border: none;
         border-radius: 4px;
         cursor: pointer;
@@ -34,20 +49,31 @@
         background: #0051b3;
       }
       .error {
-        color: #e00;
+        color: #f25959;
         margin-top: 10px;
         display: none;
       }
       .loading {
         display: none;
         margin-top: 10px;
-        color: #666;
+        color: #d5cfcf;
+      }
+      footer {
+        margin-top: 100px;
+        text-align: center;
+        color: #868383;
+      }
+      a {
+        color: #f3f3f3;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>GitHub Repo Thumbnail Downloader</h1>
+      <section>
+        <h1>GitHub Thumbnail Downloader</h1>
+        <p>Download the default thumbnail of a Github repo.</p>
+      </section>
       <form onsubmit="downloadThumbnail(event)">
         <input
           type="url"
@@ -59,16 +85,31 @@
       </form>
       <div id="loading" class="loading">Wait up! Downloading...</div>
       <div id="error" class="error"></div>
+      <footer>
+        Leave a start at
+        <a href="https://github.com/rocktimsaikia/github-thumbnail-downloader"
+          >Github</a
+        ><br />
+        Built by
+        <a
+          href="https://rocktimsaikia.dev/?ref=github-thumbnail-downloader"
+          target="_blank"
+          >@rocktimsaikia</a
+        >
+      </footer>
     </div>
 
     <script>
       async function downloadThumbnail(event) {
         event.preventDefault();
+
         const url = document.getElementById("url").value;
         const loadingElement = document.getElementById("loading");
         const errorElement = document.getElementById("error");
+        const downloadButton = document.querySelector("button");
 
         // Reset states
+        downloadButton.style.display = "none";
         loadingElement.style.display = "block";
         errorElement.style.display = "none";
         errorElement.textContent = "";
@@ -116,6 +157,7 @@
           errorElement.textContent = `Error: ${error.message}`;
           errorElement.style.display = "block";
         } finally {
+          downloadButton.style.display = "inline-block";
           loadingElement.style.display = "none";
         }
       }
